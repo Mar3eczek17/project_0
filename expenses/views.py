@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django import forms
 from django.views.generic.list import ListView
 
 from .forms import ExpenseSearchForm
@@ -18,24 +18,27 @@ class ExpenseListView(ListView):
             name = form.cleaned_data.get('name', '').strip()
             fromdate = form.cleaned_data.get('fromdate', '')
             todate = form.cleaned_data.get('todate', '')
-            print(fromdate, todate)
+            # print(fromdate, todate)
+            category = form.cleaned_data.get('category', '')
+            print(category)
 
             filters = {}
 
             if name:
                 filters['name__icontains'] = name
-                queryset = queryset.filter(**filters)
             if fromdate and todate:
                 filters['date__range'] = [fromdate, todate]
-                queryset = queryset.filter(**filters)
+            if category:
+                filters['category__in'] = category
 
-        context = super().get_context_data(
+            queryset = queryset.filter(**filters)
+
+        return super().get_context_data(
             form=form,
             object_list=queryset,
             summary_per_category=summary_per_category(queryset),
             **kwargs
         )
-        return context
 
 
 class CategoryListView(ListView):
