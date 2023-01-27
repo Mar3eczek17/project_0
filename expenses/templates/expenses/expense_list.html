@@ -3,11 +3,11 @@
 {% block content %}
 
 <a href="{% url 'expenses:expense-create' %}">add</a>
-
 <form method="get" action="">
   {{form.as_p}}
   <button type="submit">search</button>
 </form>
+
 <br>
 <table border="1">
 	<caption>Expenses</caption>

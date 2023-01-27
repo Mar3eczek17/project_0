@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic.list import ListView
 
 from .forms import ExpenseSearchForm
@@ -7,7 +8,7 @@ from .reports import summary_per_category
 
 class ExpenseListView(ListView):
     model = Expense
-    paginate_by = 5
+    paginate_by = 5  # how may items per page
 
     def get_context_data(self, *, object_list=None, **kwargs):
         queryset = object_list if object_list is not None else self.object_list
@@ -15,16 +16,28 @@ class ExpenseListView(ListView):
         form = ExpenseSearchForm(self.request.GET)
         if form.is_valid():
             name = form.cleaned_data.get('name', '').strip()
-            if name:
-                queryset = queryset.filter(name__icontains=name)
+            fromdate = form.cleaned_data.get('fromdate', '')
+            todate = form.cleaned_data.get('todate', '')
+            print(fromdate, todate)
 
-        return super().get_context_data(
+            filters = {}
+
+            if name:
+                filters['name__icontains'] = name
+                queryset = queryset.filter(**filters)
+            if fromdate and todate:
+                filters['date__range'] = [fromdate, todate]
+                queryset = queryset.filter(**filters)
+
+        context = super().get_context_data(
             form=form,
             object_list=queryset,
             summary_per_category=summary_per_category(queryset),
-            **kwargs)
+            **kwargs
+        )
+        return context
+
 
 class CategoryListView(ListView):
     model = Category
     paginate_by = 5
-
