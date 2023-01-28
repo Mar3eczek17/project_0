@@ -10,6 +10,7 @@ class ExpenseSearchForm(forms.Form):
     category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False)
     CHOICES = (('category', 'category'), ('date', 'date'),)
     order_by = forms.ChoiceField(choices=CHOICES, required=False)
+    sort_descending = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

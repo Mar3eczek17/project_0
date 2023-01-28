@@ -19,8 +19,7 @@ class ExpenseListView(ListView):
             todate = form.cleaned_data.get('todate', '')
             category = form.cleaned_data.get('category', '')
             order_by = form.cleaned_data.get('order_by', '')
-            print(order_by)
-            print(type(order_by))
+            sort_descending = form.cleaned_data.get('sort_descending', '')
 
             filters = {}
 
@@ -32,11 +31,12 @@ class ExpenseListView(ListView):
                 filters['category__in'] = category
 
             queryset = queryset.filter(**filters)
-            print(queryset)
-            # print(type(queryset))
 
             if order_by:
-                queryset = queryset.order_by(order_by)
+                if sort_descending:
+                    queryset = queryset.order_by(order_by).reverse()
+                else:
+                    queryset = queryset.order_by(order_by)
 
         return super().get_context_data(
             form=form,
