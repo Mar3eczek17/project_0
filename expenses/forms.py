@@ -9,7 +9,7 @@ class ExpenseSearchForm(forms.Form):
     todate = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), required=False)
     category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False)
     CHOICES = (('category', 'category'), ('date', 'date'),)
-    select = forms.ChoiceField(choices=CHOICES, required=False)
+    order_by = forms.ChoiceField(choices=CHOICES, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

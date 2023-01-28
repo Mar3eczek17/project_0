@@ -18,7 +18,7 @@ class ExpenseListView(ListView):
             fromdate = form.cleaned_data.get('fromdate', '')
             todate = form.cleaned_data.get('todate', '')
             category = form.cleaned_data.get('category', '')
-            order_by = form.cleaned_data.get('select', '')
+            order_by = form.cleaned_data.get('order_by', '')
             print(order_by)
             print(type(order_by))
 
@@ -35,13 +35,8 @@ class ExpenseListView(ListView):
             print(queryset)
             # print(type(queryset))
 
-            if order_by == 'category':
-                # Sort Expanse by category
-                queryset = Expense.objects.all().order_by(order_by)
-                print()
-                print(queryset)
-            elif order_by == 'date':
-                queryset = Expense.objects.all().order_by(order_by)
+            if order_by:
+                queryset = queryset.order_by(order_by)
 
         return super().get_context_data(
             form=form,
