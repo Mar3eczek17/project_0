@@ -1,5 +1,6 @@
 from django import forms
-from .models import Expense, Category
+
+from .models import Category
 
 
 class ExpenseSearchForm(forms.Form):
@@ -7,6 +8,8 @@ class ExpenseSearchForm(forms.Form):
     fromdate = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), required=False)
     todate = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), required=False)
     category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False)
+    CHOICES = (('category', 'category'), ('date', 'date'),)
+    select = forms.ChoiceField(choices=CHOICES, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

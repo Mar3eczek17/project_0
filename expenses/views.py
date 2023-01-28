@@ -1,4 +1,3 @@
-from django import forms
 from django.views.generic.list import ListView
 
 from .forms import ExpenseSearchForm
@@ -8,7 +7,7 @@ from .reports import summary_per_category
 
 class ExpenseListView(ListView):
     model = Expense
-    paginate_by = 5  # how may items per page
+    paginate_by = 12  # how may items per page
 
     def get_context_data(self, *, object_list=None, **kwargs):
         queryset = object_list if object_list is not None else self.object_list
@@ -18,9 +17,10 @@ class ExpenseListView(ListView):
             name = form.cleaned_data.get('name', '').strip()
             fromdate = form.cleaned_data.get('fromdate', '')
             todate = form.cleaned_data.get('todate', '')
-            # print(fromdate, todate)
             category = form.cleaned_data.get('category', '')
-            print(category)
+            order_by = form.cleaned_data.get('select', '')
+            print(order_by)
+            print(type(order_by))
 
             filters = {}
 
@@ -32,6 +32,16 @@ class ExpenseListView(ListView):
                 filters['category__in'] = category
 
             queryset = queryset.filter(**filters)
+            print(queryset)
+            # print(type(queryset))
+
+            if order_by == 'category':
+                # Sort Expanse by category
+                queryset = Expense.objects.all().order_by(order_by)
+                print()
+                print(queryset)
+            elif order_by == 'date':
+                queryset = Expense.objects.all().order_by(order_by)
 
         return super().get_context_data(
             form=form,
