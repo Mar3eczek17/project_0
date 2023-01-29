@@ -1,4 +1,5 @@
-from django.db.models import Sum
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth, ExtractYear, ExtractMonth, TruncYear
 from django.views.generic.list import ListView
 
 from .forms import ExpenseSearchForm
@@ -40,12 +41,19 @@ class ExpenseListView(ListView):
                     queryset = queryset.order_by(order_by)
 
             total_amount_spent = queryset.aggregate(Sum('amount'))
+            print(total_amount_spent)
+
+            total_summary_per_year_month = queryset.annotate(year=ExtractYear('date'),
+                                                             month=ExtractMonth('date')). \
+                values('year', 'month').annotate(sum=Sum('amount')).order_by('year', 'month')
+            print((total_summary_per_year_month[0]))
 
         return super().get_context_data(
             form=form,
             object_list=queryset,
             summary_per_category=summary_per_category(queryset),
             total_amount_spent=total_amount_spent,
+            total_summary_per_year_month=total_summary_per_year_month,
             **kwargs
         )
 
