@@ -1,5 +1,7 @@
-from django.db.models import Sum, Count
-from django.db.models.functions import TruncMonth, ExtractYear, ExtractMonth, TruncYear
+from itertools import chain
+
+from django.db.models import Sum, Count, Q, prefetch_related_objects
+from django.db.models.functions import ExtractYear, ExtractMonth
 from django.views.generic.list import ListView
 
 from .forms import ExpenseSearchForm
@@ -9,8 +11,7 @@ from .reports import summary_per_category
 
 class ExpenseListView(ListView):
     model = Expense
-    fields = None
-    paginate_by = 12  # how may items per page
+    paginate_by = 20  # how may items per page
 
     def get_context_data(self, *, object_list=None, **kwargs):
         queryset = object_list if object_list is not None else self.object_list
@@ -42,12 +43,10 @@ class ExpenseListView(ListView):
                     queryset = queryset.order_by(order_by)
 
             total_amount_spent = queryset.aggregate(Sum('amount'))
-            print(total_amount_spent)
 
             total_summary_per_year_month = queryset.annotate(year=ExtractYear('date'),
                                                              month=ExtractMonth('date')). \
                 values('year', 'month').annotate(sum=Sum('amount')).order_by('year', 'month')
-            print((total_summary_per_year_month[0]))
 
         return super().get_context_data(
             form=form,
@@ -62,3 +61,24 @@ class ExpenseListView(ListView):
 class CategoryListView(ListView):
     model = Category
     paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        qs1 = Expense.objects.values("category").annotate(expense_count=Count("pk")). \
+            values('expense_count')
+        # queryset_expense = [i for i in queryset_expense]
+        print('+++++++++++++++++++')
+        print((qs1))
+        print(Category.objects.all().values())
+
+
+        print('|||||||||||||||||||||')
+        query_set = [(c, Expense.objects.filter(category=c.id).count()) for c in Category.objects.all()]
+        query_set = dict(query_set)
+        print(query_set)
+
+
+
+        return super().get_context_data(
+            query_set=query_set,
+            **kwargs
+        )
