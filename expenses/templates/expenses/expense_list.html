@@ -22,7 +22,6 @@
 	</tr>
 	</thead>
 	<tbody>
-
 	{% for obj in object_list %}
 	<tr>
 		<td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
@@ -63,6 +62,7 @@
 		<td>{{total_amount_spent.amount__sum|floatformat:2}}</td>
 	</tr>
 </table>
+
 <table border="5">
 	<caption>Summary per year-month</caption>
 	<td>Year-month:</td>

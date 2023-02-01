@@ -1,33 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a href="{% url 'expenses:category-create' %}">add</a>
 
+<a href="{% url 'expenses:category-create' %}">add</a>
 <table border="1">
     <thead>
     <tr>
         <th>name</th>
         <th>actions</th>
         <th>actions</th>
-        <th>expenses</th>
     </tr>
     </thead>
     <tbody>
-
     {% for obj in object_list %}
     <tr>
         <td>{{obj.name}}</td>
         <td><a href="{% url 'expenses:category-delete' obj.id %}">delete</a></td>
         <td><a href="{% url 'expenses:category-update' obj.id %}">update</a></td>
-        <td>
-
-                {{ obj.id }}
-
-        </td>
     </tr>
     {% endfor %}
-	</table>
-
+    </tbody>
+</table>
 
 <table border="1">
     <thead>
@@ -43,6 +36,6 @@
         <td>{{ value }}</td>
     </tr>
     {% endfor %}
-	</table>
     </tbody>
+</table>
 {% endblock %}
